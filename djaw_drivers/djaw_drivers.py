@@ -1,4 +1,4 @@
-# coding:utf-8
+﻿# coding:utf-8
 # include <sys.stdin>
 # include <sys.stdout>
 from selenium import webdriver
@@ -22,7 +22,7 @@ from datetime import datetime
 import pytesser3 as pyt3
 from PIL import Image
 from io import BytesIO
-
+from selenium.webdriver.support.select import Select
 
 
 
@@ -38,8 +38,8 @@ switch_1 = True
 error_count = 0
 time_clock = 5
 b = True
-my = setting.setting("","")
-#大型汽车=大型汽车
+my = setting.setting("ctsz005","123456")
+#大型汽车=大型汽车19:29 2018/8/30
 #低速车 =？无法提取
 #普通摩托车=？无法提取
 #轻便摩托车=？无法提取
@@ -111,7 +111,7 @@ driver.implicitly_wait(5)
 
 
 url = my.url
-#----------------------------------------------------------------开始录入车辆------------------------------------
+#----------------------------------------------------------------开始录入驾驶人------------------------------------
 driver.get(url)  # 打开网址
 driver.maximize_window()  # 窗口最大化
 
@@ -192,6 +192,7 @@ all_handles=driver.window_handles#标记所有窗口
 #    if handle !=main_windows:
 #        driver.switch_to_window(handle)#切换到非主窗口
 driver.switch_to_window(all_handles[-1])
+type_windows =driver.current_window_handle
 # "大型汽车", "J7D220", "重型普通货车",  "货运",  "13777761839",  "车溪乡翊武村民委员会8组08046号",  "城头山镇",  "",  "","1" 
 #   "大型汽车""J78783","中型自卸货车", "货运", "18573635693","车溪乡万兴村2组02029号",  "城头山镇", "",  "","2"
 #list_car=[carData.carData("大型汽车","J78783","中型自卸货车", "货运", "18573635693","车溪乡万兴村2组02029号",  "城头山镇", "",  "","2"),carData.carData("大型汽车","J7D220", "重型普通货车",  "货运",  "13777761839",  "车溪乡翊武村民委员会8组08046号",  "城头山镇",  "",  "","1" )]
@@ -200,116 +201,181 @@ driver.switch_to_window(all_handles[-1])
 
 # for p1 in list(reversed(list_poor_family[:])):
 
-try:
-    for p1 in list_driver:
-        #if p1.suoyin.endswith("50"):#每隔50条保存一次
-        #        e_to_j.carDatalist_to_json(list_car, 'car.json')
+#try:
+
+for p1 in list_driver:
+    #if p1.suoyin.endswith("50"):#每隔50条保存一次
+    #        e_to_j.carDatalist_to_json(list_car, 'car.json')
             
-        try:
-            if (p1.edit == False and p1.error == False): 
-                if p1.suoyin.endswith("0"):#每隔10条保存一次
-                    e_to_j.carDatalist_to_json(list_driver, 'driver2.json')#写入11767条数据耗时13秒
+    try:
+        if (p1.edit == False and p1.error == False): 
+            if p1.suoyin.endswith("0"):#每隔10条保存一次
+                e_to_j.carDatalist_to_json(list_driver, 'driver2.json')#写入11767条数据耗时13秒
                     
-                #WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                #                (By.XPATH, my.xpath11)))
-                #//td[@id = 'QY_Code_td']/input
-
-
-    
-                time.sleep(1)
-
-                driver.find_element_by_xpath(my.xpath13).clear() #清空
-    
-                driver.find_element_by_xpath(my.xpath13).send_keys(p1.ID) #输入身份证号
+            #WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+            #                (By.XPATH, my.xpath11)))
+            #//td[@id = 'QY_Code_td']/input
+            #if int(p1.suoyin)%2==0:#每隔500条清理一次缓存
+            #    type_windows =driver.current_window_handle
+            #    #driver.get("chrome://settings/clearBrowserData")
+            #    js='window.open("chrome://settings");'
+            #    driver.execute_script(js)
                 
-                time.sleep(0.5)
-                driver.find_element_by_xpath(my.xpath17).click()  # 点击查重
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                                (By.XPATH, my.xpath19)))
-                if '勿重复录入' in driver.find_element_by_xpath(my.xpath19).text:
-                    driver.find_element_by_xpath(my.xpath18).click() #点击确定
-                    p1.pass_state()
-                    continue
-                else:
-                    driver.find_element_by_xpath(my.xpath18).click() #点击确定
-                time.sleep(1)
-                driver.find_element_by_xpath(my.xpath14).click()  # 点击提取
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                                (By.XPATH, my.xpath19)))
-                if '未提到该身份证号' in driver.find_element_by_xpath(my.xpath19).text:
-                    driver.find_element_by_xpath(my.xpath18).click() #点击确定
-                    p1.show_error_tiqu()
-                    continue
-                else:
-                    driver.find_element_by_xpath(my.xpath18).click()  # 点击提取后弹窗确定
-        
-                time.sleep(0.5)
-                ele = driver.find_element_by_xpath(my.xpath11)  
-                driver.execute_script("arguments[0].focus();",ele)
-                time.sleep(1)
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                                (By.XPATH, "//a[@attr_name = '%s']"% p1.location)))
-                driver.find_element_by_xpath("//a[@attr_name = '%s']"% p1.location).click()  # 点击获取行政区划
+            #    all_handles = driver.window_handles
+            #    print(all_handles)
 
-
-                #ele2 = driver.find_element_by_xpath(my.xpath15)
-                #driver.execute_script("arguments[0].click();",ele)# 点击提取
-        
-
-                time.sleep(0.5)
-                driver.find_element_by_xpath(my.xpath22).clear() #清空电话号码输入框
-                driver.find_element_by_xpath(my.xpath22).send_keys(p1.phone)
-                time.sleep(0.5)
-                driver.find_element_by_xpath(my.xpath23).send_keys(p1.date)   
+            #    driver.switch_to_window(all_handles[-1])
                 
-                driver.find_element_by_xpath(my.xpath20).click()#点击保存
-                p1.show_edit()
-                WebDriverWait(driver, 10).until(EC.presence_of_element_located(
-                                (By.XPATH, my.xpath19)))     
-                #time.sleep(1)
-                driver.find_element_by_xpath(my.xpath18).click()#点击继续
+            #    driver.get("chrome://settings")
+            #    time.sleep(2)
+                
+            #    root1 = driver.find_element_by_tag_name('settings-ui')
+            #    shadow_root1 = e_to_j.expand_shadow_element(root1,driver)
+
+            #    root2 = shadow_root1.find_element_by_css_selector('[page-name="设置"]')
+            #    shadow_root2 = e_to_j.expand_shadow_element(root2,driver)
+
+            #    root3 = shadow_root2.find_element_by_id('search')
+            #    shadow_root3 = e_to_j.expand_shadow_element(root3,driver)
+
+            #    search_button = shadow_root3.find_element_by_id("searchTerm")
+            #    search_button.click()
+
+            #    text_area = shadow_root3.find_element_by_id('searchInput')
+            #    text_area.send_keys("清除浏览数据")
+            #    time.sleep(2)
+
+            #    root0 = shadow_root1.find_element_by_id('main')
+            #    shadow_root0_s = e_to_j.expand_shadow_element(root0,driver)
+
+
+            #    root1_p = shadow_root0_s.find_element_by_css_selector('settings-basic-page')
+            #    shadow_root1_p = e_to_j.expand_shadow_element(root1_p,driver)
+
+
+            #    root1_s = shadow_root1_p.find_element_by_css_selector('settings-privacy-page')
+            #    shadow_root1_s = e_to_j.expand_shadow_element(root1_s,driver)
+
+            #    content_settings_div = shadow_root1_s.find_element_by_css_selector('settings-animated-pages')
+
+
+            #    content_settings = content_settings_div.find_element_by_css_selector('button[id="clearBrowsingDataTrigger"]')
+            #    driver.execute_script("arguments[0].click();",content_settings)
+            #    time.sleep(2)
+            #    root1_q =shadow_root1_s.find_element_by_css_selector('settings-clear-browsing-data-dialog')
+            #    shadow_root1_q = e_to_j.expand_shadow_element(root1_q,driver)
+
+            #    setting_button_ele = shadow_root1_q.find_element_by_css_selector('[id="clearBrowsingDataConfirm"]')
+            #    driver.execute_script("arguments[0].click();",setting_button_ele)
+
+            #    time.sleep(5)
+            #    driver.close()
+            #    driver.switch_to_window(type_windows)
+
+
     
-            else :
+            time.sleep(1)
+
+            driver.find_element_by_xpath(my.xpath13).clear() #清空
+    
+            driver.find_element_by_xpath(my.xpath13).send_keys(p1.ID) #输入身份证号
+                
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpath17).click()  # 点击查重
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, my.xpath19)))
+            if '勿重复录入' in driver.find_element_by_xpath(my.xpath19).text:
+                driver.find_element_by_xpath(my.xpath18).click() #点击确定
                 p1.pass_state()
-        except TimeoutException :
-            p1.show_error()
-            print("")
-            driver.driver.current_window_handle.close()
-            driver.switch_to_window(main_windows)#切换到主窗口
-            driver.refresh()
-            time.sleep(3)
-            driver.switch_to_frame('leftFrame') #切换iframe
-            #driver.find_element_by_xpath(my.xpath102).click() #点击农村驾驶人
+                continue
+            else:
+                driver.find_element_by_xpath(my.xpath18).click() #点击确定
             time.sleep(1)
-            driver.find_element_by_xpath(my.xpath5).click()
-    
-            #js = "document.querySelector('#menutab_2').click()"
-            #driver.execute_script(js)
-    
-            #driver.find_element_by_xpath(my.xpath5).click()
+            driver.find_element_by_xpath(my.xpath14).click()  # 点击提取
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, my.xpath19)))
+            if '未提到该身份证号' in driver.find_element_by_xpath(my.xpath19).text:
+                driver.find_element_by_xpath(my.xpath18).click() #点击确定
+                p1.show_error_tiqu()
+                continue
+            else:
+                driver.find_element_by_xpath(my.xpath18).click()  # 点击提取后弹窗确定
+        
+            time.sleep(0.5)
+            ele = driver.find_element_by_xpath(my.xpath11)  
+            driver.execute_script("arguments[0].focus();",ele)
             time.sleep(1)
-            driver.find_element_by_xpath(my.xpathjcxxgl).click()
-            time.sleep(1)
-            driver.find_element_by_xpath(my.xpath7).click()
-            time.sleep(1)
-            driver.find_element_by_xpath(my.xpath8).click()
-            time.sleep(1)
-            driver.switch_to.default_content() #恢复默认表单
-            driver.switch_to_frame('rightFrame') #切换iframe
-    
-            main_windows=driver.current_window_handle #标记当前窗口为主窗口
-            driver.find_element_by_xpath(my.xpath9).click()  
-            #time.sleep(2)
-            all_handles=driver.window_handles#标记所有窗口
-            driver.switch_to_window(all_handles[-1])
-            continue
-except :
-    pass
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, "//a[@attr_name = '%s']"% p1.location)))
+            driver.find_element_by_xpath("//a[@attr_name = '%s']"% p1.location).click()  # 点击获取行政区划
 
-finally:
-    e_to_j.carDatalist_to_json(list_driver, 'driver2.json')
-    with open("log.txt", 'w', encoding="utf-8") as f:
-        for p1 in list_car:
-            f.writelines(p1.log+'\n')
 
-    driver.quit()
+            #ele2 = driver.find_element_by_xpath(my.xpath15)
+            #driver.execute_script("arguments[0].click();",ele)# 点击提取
+        
+
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpath22).clear() #清空电话号码输入框
+            driver.find_element_by_xpath(my.xpath22).send_keys(p1.phone)
+            time.sleep(0.5)
+            driver.find_element_by_xpath(my.xpath23).send_keys(p1.date) 
+            
+            s1 = Select(driver.find_element_by_id("JiaZQX"))
+            if s1.first_selected_option.text == "请选择":
+                s1.select_by_value("长期")
+                
+            driver.find_element_by_xpath(my.xpath20).click()#点击保存
+
+            
+
+            
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located(
+                            (By.XPATH, my.xpath19)))     
+            #time.sleep(1)
+            driver.find_element_by_xpath(my.xpath18).click()#点击继续
+            p1.show_edit() 
+        else :
+            p1.pass_state()
+    except TimeoutException :
+        p1.show_error()
+        print("")
+        type_windows.close()
+        driver.switch_to_window(main_windows)#切换到主窗口
+        driver.refresh()
+        time.sleep(3)
+        driver.switch_to_frame('leftFrame') #切换iframe
+        #driver.find_element_by_xpath(my.xpath102).click() #点击农村驾驶人
+        time.sleep(1)
+        driver.find_element_by_xpath(my.xpath5).click()
+    
+        #js = "document.querySelector('#menutab_2').click()"
+        #driver.execute_script(js)
+    
+        #driver.find_element_by_xpath(my.xpath5).click()
+        time.sleep(1)
+        driver.find_element_by_xpath(my.xpathjcxxgl).click()
+        time.sleep(1)
+        driver.find_element_by_xpath(my.xpath7).click()
+        time.sleep(1)
+        driver.find_element_by_xpath(my.xpath8).click()
+        time.sleep(1)
+        driver.switch_to.default_content() #恢复默认表单
+        driver.switch_to_frame('rightFrame') #切换iframe
+    
+        main_windows=driver.current_window_handle #标记当前窗口为主窗口
+        driver.find_element_by_xpath(my.xpath9).click()  
+        #time.sleep(2)
+        all_handles=driver.window_handles#标记所有窗口
+        driver.switch_to_window(all_handles[-1])
+        type_windows =driver.current_window_handle
+        continue
+#except :
+#    pass
+
+#finally:
+#    e_to_j.carDatalist_to_json(list_driver, 'driver2.json')
+#    with open("log.txt", 'w', encoding="utf-8") as f:
+#        for p1 in list_driver:
+#            f.writelines(p1.log+'\n')
+
+#    driver.quit()

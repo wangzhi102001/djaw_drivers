@@ -6,6 +6,7 @@ import codecs
 import driverData
 import datetime
 import xlsxwriter
+from selenium import webdriver
 
  
 
@@ -165,3 +166,8 @@ def excel_json(path,path_two):
     with codecs.open(path_two,"w",encoding='utf-8',errors='ignore') as f:
         f.write(j)
     print("excel转换json完成")
+
+def expand_shadow_element(element,driver):
+  shadow_root = driver.execute_script('return arguments[0].shadowRoot', element)
+  return shadow_root
+
